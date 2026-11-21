@@ -28,7 +28,7 @@ class GeminiProvider(LLMProvider):
 
     provider_name = "Gemini"
 
-    def __init__(self, api_key, model="gemini-3.8-flash"):
+    def __init__(self, api_key, model="gemini-3.1-flash-lite"):
         self.model = model
         self.client = genai.Client(
             api_key=api_key,

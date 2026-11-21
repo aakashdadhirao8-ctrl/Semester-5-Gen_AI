@@ -11,17 +11,17 @@ usage_logger = UsageLogger()
 
 try:
     provider_name = input(
-        "Choose provider (gemini/ollama): "
+        "Choose provider (gemini/ollama) [Default: gemini]: "
     ).strip().lower()
 
-    if provider_name == "gemini":
+    if provider_name in ["gemini", "1", ""]:
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
             raise ValueError("Gemini API key not found in .env")
         provider = GeminiProvider(api_key)
 
-    elif provider_name == "ollama":
-        provider = OllamaProvider("gpt-oss:20b")
+    elif provider_name in ["ollama", "2"]:
+        provider = OllamaProvider("llama3.2")
 
     else:
         raise ValueError("Invalid provider selected")

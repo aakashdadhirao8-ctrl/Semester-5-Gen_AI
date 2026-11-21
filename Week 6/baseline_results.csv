@@ -1,167 +1,56 @@
 ﻿Question_ID,Question,Expected_Answer,LLM_Answer,Matched_Keywords,Missing_Keywords,Score,Status,Source,Model,Release
-Q001,What is tokenization in large language models?,Tokenization is the process of splitting input text into smaller units called tokens.,"Tokenization in large language models refers to the process of breaking down text into smaller units called tokens. These tokens can be words, subwords, or characters, depending on the tokenization method used. The purpose of tokenization is to convert the input text into a format that the model can understand and process. This is crucial because large language models are trained on tokenized data and need to receive input in the same format to generate coherent and meaningful outputs.","text, tokens",splitting,66.67,PASS,https://huggingface.co/docs/transformers/en/tokenizer_summary,qwen2.5-coder:14b,v0.1
-Q002,What is a token?,"A token is a unit of text such as a word, subword, character or punctuation mark processed by a language model.","A token is a digital representation of value or information that can be used to facilitate transactions or access to services. Tokens can be used in various contexts, such as:
+Q001,What is tokenization in large language models?,Tokenization is the process of splitting input text into smaller units called tokens.,"**Tokenization** is the foundational step in how Large Language Models (LLMs) like GPT-4, Claude, or LLaMA process text. 
 
-1. **Cryptocurrency**: Digital or virtual tokens that function as a medium of exchange, similar to traditional currencies. Examples include Bitcoin, Ethereum, and various altcoins.
+Because computers and neural networks cannot understand raw human text (letters, words, and punctuation), text must first be converted into numbers. Tokenization is the process of breaking down a sequence of text into smaller pieces called **tokens**.
 
-2. **Access Tokens**: Used in authentication and authorization processes to grant access to resources or services. They are typically issued by an authorization server and used by a client to access a protected resource.
+Here is a breakdown of how it works and why it matters.
 
-3. **API Tokens**: Used to authenticate requests to APIs (Application Programming Interfaces). They provide a way for applications to securely communicate with each other.
+---
 
-4. **Game Tokens**: Used in video games to represent in-game currency, items, or other assets.
+### 1. What is a ""Token""?
+A token is not necessarily a whole word. A token can be:
+* **A whole word:** e.g., `""cat""`, `""running""`
+* **Part of a word (Sub-word):** e.g., `""un-""`, `""-ing""`, `""th""`
+* **A single character:** e.g., `""a""`, `""?""`
+* **Punctuation or spaces:** e.g., `"",""`
 
-5. **Membership Tokens**: Used to verify membership in a club, organization, or community.
+As a general rule of thumb in English:
+* **1 token** $\approx$ **0.75 words**
+* **100 tokens** $\approx$ **75 words**
+* **750 tokens** $\approx$ **500 words** (about one page of text)
 
-6. **Security Tokens**: Represent ownership in a company or asset and are traded on financial markets.
+---
 
-Tokens can be created and managed using blockchain technology, which provides a decentralized and secure platform for their issuance and transactions.","unit, text","word, subword",50.0,REVIEW,https://huggingface.co/docs/transformers/en/tokenizer_summary,qwen2.5-coder:14b,v0.1
-Q003,What is Byte Pair Encoding?,Byte Pair Encoding is a subword tokenization algorithm that repeatedly merges frequent adjacent symbol pairs.,"Byte Pair Encoding (BPE) is a subword tokenization technique used in natural language processing. It is designed to address the limitations of traditional word tokenization methods, which often struggle with rare words or unknown words that are infrequent in the training data. BPE works by iteratively merging the most frequent pairs of bytes (or characters) in a large corpus of text, thereby creating a vocabulary of subword units that can be used to represent words in a more flexible and efficient way.
+### 2. How Tokenization Works (Subword Tokenization)
+Older AI models used *word-level tokenization* (assigning a number to every unique word) or *character-level tokenization* (treating every letter as a token). Both had major flaws:
+* Word-level created massive vocabularies and struggled with misspelled words or new slang.
+* Character-level created sequences that were too long for the AI to process efficiently.
 
-Here's a brief overview of how BPE works:
+Modern LLMs use **Subword Tokenization** algorithms (such as *Byte-Pair Encoding (BPE)* or *WordPiece*). These algorithms analyze massive datasets to find common patterns. 
 
-1. **Initialization**: Start with each character in the text as its own token.
+* **Common words** remain as a single token (e.g., `“apple”`).
+* **Rare words, complex words, or foreign words** are broken down into smaller chunks (e.g., the rare word `“unhappiness”` might be split into `[“un”`, `“happiness”]` or `[“un”`, `“happi”`, `“ness” ]`).
 
-2. **Frequency Count**: Count the frequency of each pair of adjacent tokens (bytes or characters) in the text.
+**Example:**
+The sentence *""I love learning about AI.""* might be tokenized into the following list of tokens:
+`[""I"", "" love"", "" learn"", ""ing"", "" about"", "" AI"", "".""]`
+*(Notice how spaces are often included as part of the token, and ""learning"" is split into ""learn"" and ""ing"".)*
 
-3. **Merge**: Identify the most frequent pair and merge them into a single token. This reduces the number of unique tokens and increases the frequency of the new token.
+---
 
-4. **Repeat**: Repeat the frequency count and merge steps for a specified number of iterations or until a desired vocabulary size is reached.
+### 3. The Tokenization Pipeline
+Once text is broken into tokens, the model performs the following steps:
+1. **Lookup:** Each token is mapped to a unique integer (ID) from the model's predefined **vocabulary** (which usually contains anywhere from 32,000 to over 100,000 unique tokens).
+   * *Example:* `[""I"", "" love"", "" AI""]` $\rightarrow$ `[40, 1840, 9123]`
+2. **Embedding:** These numbers are then converted into high-dimensional vectors (lists of numbers) that represent the semantic meaning of the token, allowing the neural network to understand context.
 
-5. **Tokenization**: Once the vocabulary is built, new text can be tokenized by splitting it into the learned subword units.
+---
 
-BPE has several advantages:
+### 4. Why Tokenization Matters for Users
 
-- **Flexibility**: It can handle rare words and unknown words more effectively than traditional word tokenization.
-- **Efficiency**: It reduces the size of the vocabulary compared to character-level tokenization while maintaining a high level of accuracy.
-- **Language Independence**: It can be applied to any language, as it does not rely on linguistic knowledge.
+As a user or developer interacting with LLMs, tokenization impacts you in several practical ways:
 
-BPE is widely used in various natural language processing tasks, including machine translation, text summarization, and language modeling, often in conjunction with models like Transformer.","subword, frequent, pairs",merges,75.0,PASS,https://huggingface.co/docs/transformers/en/tokenizer_summary,qwen2.5-coder:14b,v0.1
-Q004,What is WordPiece tokenization?,WordPiece is a subword tokenization algorithm that builds a vocabulary of frequently useful word pieces.,"WordPiece tokenization is a subword tokenization technique used in natural language processing (NLP) that splits words into subwords or ""word pieces"" to handle out-of-vocabulary (OOV) words and morphological variations. This method is particularly useful in languages with complex morphology or when dealing with a large vocabulary. It was introduced by Google in the context of the WordPiece model, which is used in models like BERT (Bidirectional Encoder Representations from Transformers). The process involves training a model to identify the most frequent subword units in a corpus, which are then used to tokenize new text. This approach helps in reducing the size of the vocabulary and improving the model's ability to generalize to unseen words.","subword, vocabulary, word, pieces",,100.0,PASS,https://huggingface.co/docs/transformers/en/tokenizer_summary,qwen2.5-coder:14b,v0.1
-Q005,What is SentencePiece?,SentencePiece is a language-independent tokenizer that can train directly on raw text and supports BPE and Unigram models.,"SentencePiece is a subword tokenizer and detokenizer library that is designed to enable users to build a tokenizer from a corpus of text. It is particularly useful for natural language processing tasks where the vocabulary size is large, and it helps in handling out-of-vocabulary words by breaking them down into subwords. SentencePiece supports several algorithms for subword segmentation, including Byte Pair Encoding (BPE), Unigram, and Character-based models. It is widely used in the machine translation community and other NLP applications to improve the performance of models by providing a more flexible vocabulary.","BPE, Unigram","language-independent, raw text",50.0,REVIEW,https://github.com/google/sentencepiece,qwen2.5-coder:14b,v0.1
-Q006,What is the difference between BPE and WordPiece?,"Both are subword tokenization methods, but BPE merges frequent symbol pairs while WordPiece uses a vocabulary learning approach based on the usefulness of word pieces.","BPE (Byte Pair Encoding) and WordPiece are both subword tokenization methods used in natural language processing, particularly in the training of language models. They are designed to address the limitations of traditional word tokenization methods, which often struggle with unknown words or rare words that are infrequent in the training data.
-
-BPE works by iteratively merging the most frequent pairs of bytes (or characters) in the training corpus. This process continues until a predefined vocabulary size is reached. The result is a vocabulary that includes subword units, which can be combined to form words. BPE is known for its simplicity and efficiency, and it tends to produce more interpretable subword units compared to WordPiece.
-
-WordPiece, on the other hand, is a more complex method that involves segmenting words into subword units based on their frequency in the training data. It starts by creating a vocabulary of all the words in the training corpus and then iteratively splits the least frequent words into smaller subword units. This process continues until the desired vocabulary size is achieved. WordPiece is known for its ability to handle morphological variations and inflections, making it particularly useful for languages with complex morphology.
-
-In summary, while both BPE and WordPiece are subword tokenization methods, they differ in their approach to creating the vocabulary. BPE focuses on merging byte pairs, while WordPiece focuses on splitting words into subword units based on frequency.","subword, BPE, WordPiece, vocabulary",,100.0,PASS,https://huggingface.co/docs/transformers/en/tokenizer_summary,qwen2.5-coder:14b,v0.1
-Q007,Why can Telugu text produce different token counts from English text?,"Token counts depend on the tokenizer vocabulary, training data and how the language is represented in that vocabulary.","Telugu text can produce different token counts from English text due to several linguistic and structural differences between the two languages. Here are some key factors that contribute to this variation:
-
-1. **Character vs. Word-Based Writing Systems**:
-   - **English**: Uses a word-based writing system where each word is a distinct unit of meaning.
-   - **Telugu**: Uses a syllable-based writing system where each character (grapheme) represents a syllable. This can lead to longer sequences of characters representing a single word or concept.
-
-2. **Agglutinative Nature**:
-   - Telugu is an agglutinative language, meaning that words are formed by adding suffixes to a root word. This can result in longer words compared to English, which tends to use more compound words or separate words to express complex ideas.
-
-3. **Script Complexity**:
-   - The Telugu script has a more complex structure compared to the Latin script used for English. Telugu characters can combine in various ways to form different sounds and meanings, which can affect tokenization.
-
-4. **Tokenization Methods**:
-   - The way text is tokenized can also influence the token count. For example, a tokenizer that splits on spaces might produce fewer tokens in Telugu due to the lack of spaces between words, whereas a more sophisticated tokenizer that recognizes syllable boundaries might produce more tokens.
-
-5. **Punctuation and Sentence Structure**:
-   - Telugu punctuation and sentence structure can differ from English, potentially affecting how text is segmented into tokens.
-
-6. **Ambiguity and Homophones**:
-   - Telugu, like many languages, has words that can have multiple meanings depending on context. This can complicate tokenization, especially if the tokenizer does not consider context.
-
-7. **Use of Diacritics**:
-   - Telugu uses diacritics (small marks above or below letters) to modify sounds. These can affect how characters are grouped and tokenized.
-
-These factors collectively contribute to the variability in token counts between Telugu and English texts, and they highlight the importance of language-specific considerations in natural language processing tasks.","tokenizer, language, token counts",vocabulary,75.0,PASS,https://huggingface.co/docs/transformers/en/tokenizer_summary,qwen2.5-coder:14b,v0.1
-Q008,What is a token ratio?,Token ratio is the number of tokens divided by the number of words in the input text.,A token ratio is a financial metric used to evaluate the relationship between the number of tokens held by a company's management and the total number of tokens outstanding. It is calculated by dividing the number of tokens held by the company's management by the total number of tokens issued. This ratio can provide insights into the level of control that management has over the company and can be used to assess the potential for insider trading or other conflicts of interest.,tokens,"words, divided",33.33,REVIEW,https://huggingface.co/docs/transformers/en/tokenizer_summary,qwen2.5-coder:14b,v0.1
-Q009,What are input tokens?,"Input tokens are the tokens sent to a language model, including the prompt and other supplied context.","Input tokens refer to the individual units of text that are fed into a language model or machine learning algorithm for processing. These tokens can be as small as a single character or as large as a complete word, depending on the tokenization method used. In the context of natural language processing, input tokens are the basic building blocks that the model uses to understand and generate human-like text.","input, tokens, context",prompt,75.0,PASS,https://ai.google.dev/gemini-api/docs/tokens,qwen2.5-coder:14b,v0.1
-Q010,What are output tokens?,Output tokens are the tokens generated by a language model in its response.,"Output tokens refer to the tokens generated by a language model when it produces a response or output. These tokens are the building blocks of the generated text, where each token can be a word, a part of a word, or a punctuation mark. In the context of machine learning and natural language processing, tokens are used to represent the smallest units of meaning in a language, and they are essential for tasks such as text generation, translation, and summarization.","output, tokens, generated, response",,100.0,PASS,https://ai.google.dev/gemini-api/docs/tokens,qwen2.5-coder:14b,v0.1
-Q011,How is LLM API cost calculated?,"API cost is calculated by multiplying input tokens by the input rate and output tokens by the output rate, then adding the two costs.","The cost of using a Large Language Model (LLM) API, such as those provided by Alibaba Cloud, is typically calculated based on the number of API calls made and the amount of data processed. The cost structure can vary depending on the specific API and the service provider, but generally, it includes the following components:
-
-1. **API Calls**: Each request made to the API is counted as an API call. The cost per call can range from a few cents to a few dollars, depending on the complexity of the request and the service level.
-
-2. **Data Processing**: The amount of data processed, such as the number of tokens (words or subwords) in the input and output, can also incur additional costs. This is because processing larger amounts of data requires more computational resources.
-
-3. **Concurrency and Throughput**: Some APIs may charge based on the number of concurrent requests or the throughput of data processed per unit time.
-
-4. **Additional Features**: If the API offers additional features like custom models, fine-tuning, or advanced analytics, these may incur extra costs.
-
-To get a precise understanding of the cost, it's best to refer to the pricing details provided by the service provider. Alibaba Cloud, for example, offers detailed pricing information on its website, which includes breakdowns of costs for different API usage scenarios.",,"input tokens, output tokens, input rate, output rate",0.0,REVIEW,https://ai.google.dev/gemini-api/docs/pricing,qwen2.5-coder:14b,v0.1
-Q012,What is a context window?,"A context window is the maximum amount of tokens a model can process in a single interaction, subject to the model's limits.","A context window refers to the amount of text or information that a language model can process and remember at one time. In the context of artificial intelligence and natural language processing, the context window is an important factor that affects the performance and capabilities of the model. A larger context window allows the model to consider more information when generating responses, potentially leading to more coherent and contextually appropriate outputs. However, increasing the context window also requires more computational resources and can lead to longer processing times.","context, process","maximum, tokens",50.0,REVIEW,https://huggingface.co/docs/transformers/en/model_doc/gpt2,qwen2.5-coder:14b,v0.1
-Q013,What is a rate limit in an LLM API?,"A rate limit restricts API usage over a period of time, such as requests per minute or tokens per minute.","A rate limit in a Language Model as a Service (LLM) API refers to the maximum number of requests that a user or application can make to the API within a specified time period. This limit is implemented to prevent abuse, ensure fair usage, and manage the load on the API's servers. Rate limits are typically measured in requests per minute (RPM), requests per hour (RPH), or requests per day (RPD), and they can vary depending on the API provider and the specific service plan.
-
-Implementing rate limits helps maintain the quality of service for all users by preventing any single user from overwhelming the system with too many requests. It also allows API providers to allocate resources more efficiently and ensure that the service remains available and responsive for everyone. Users who exceed their rate limit may face temporary or permanent restrictions, or they may need to upgrade to a higher-tier plan to increase their limit.","requests, minute, limit",tokens,75.0,PASS,https://ai.google.dev/gemini-api/docs/rate-limits,qwen2.5-coder:14b,v0.1
-Q014,Why is monitoring token usage important?,"Monitoring token usage helps estimate API costs, manage budgets and identify excessive usage.","Monitoring token usage is important for several reasons:
-
-1. **Security**: Tokens, especially API keys and access tokens, are used to authenticate and authorize access to systems and services. Monitoring their usage helps detect unauthorized access or misuse, which can be a sign of a security breach.
-
-2. **Compliance**: Many industries have regulations that require monitoring and logging of access and usage of sensitive data or systems. Monitoring token usage ensures compliance with these regulations.
-
-3. **Resource Management**: By tracking how tokens are used, organizations can better manage their resources. This includes understanding which services are being used most frequently and which might be underutilized, allowing for more efficient allocation of resources.
-
-4. **Performance Optimization**: Monitoring token usage can help identify performance bottlenecks or inefficiencies in how services are accessed. This information can be used to optimize the system for better performance.
-
-5. **Cost Management**: In cloud environments, API calls and token usage can incur costs. Monitoring helps organizations understand their spending patterns and optimize their usage to reduce costs.
-
-6. **Audit Trails**: Comprehensive monitoring provides audit trails that can be used to review and understand the history of access and usage. This is crucial for accountability and troubleshooting.
-
-Overall, monitoring token usage is a critical component of maintaining the security, efficiency, and compliance of digital systems and services.","token usage, costs, monitoring",budgets,75.0,PASS,https://ai.google.dev/gemini-api/docs/tokens,qwen2.5-coder:14b,v0.1
-Q015,What is autoregressive generation?,Autoregressive generation is the process of generating one token at a time using previously available tokens as context.,"Autoregressive generation is a method used in machine learning, particularly in natural language processing (NLP) and generative models, where the model generates content step by step. At each step, the model predicts the next token (word, character, or subword) based on the sequence of tokens that have been generated so far. This process is repeated until the model generates a complete sequence or reaches a predefined stopping condition.
-
-The key characteristic of autoregressive models is that they generate content sequentially, with each new token being dependent on the previous ones. This approach is in contrast to other generative methods, such as those based on Markov chains or recurrent neural networks (RNNs), which might generate content in parallel or have different dependencies.
-
-Autoregressive models are widely used in various applications, including text generation, speech synthesis, and image generation. Examples of popular autoregressive models include GPT (Generative Pre-trained Transformer) and its variants, which have achieved state-of-the-art performance in many NLP tasks.",,"one token, previously, context, generating",0.0,REVIEW,https://huggingface.co/docs/transformers/en/generation_strategies,qwen2.5-coder:14b,v0.1
-Q016,What is next-token prediction?,Next-token prediction is the task of estimating the probability of possible next tokens based on the preceding sequence.,,,"probability, next tokens, preceding sequence",0,ERROR,https://huggingface.co/docs/transformers/en/generation_strategies,qwen2.5-coder:14b,v0.1
-Q017,What is a probability distribution in language generation?,"A probability distribution assigns probabilities to possible next tokens, with the probabilities summing to one.","In language generation, a probability distribution is a statistical model that assigns a probability to each possible word or sequence of words that could follow a given context. This distribution is used to predict the next word in a sentence or the continuation of a text. The probability distribution is typically generated by a language model, which has been trained on a large corpus of text data. The model learns the likelihood of different words or phrases occurring in various contexts, allowing it to generate coherent and contextually appropriate text.",,"probabilities, next tokens, summing, one",0.0,REVIEW,https://huggingface.co/docs/transformers/en/generation_strategies,qwen2.5-coder:14b,v0.1
-Q018,What is greedy decoding?,Greedy decoding selects the next token with the highest probability at each generation step.,"Greedy decoding is a straightforward algorithm used in natural language processing, particularly in the context of sequence-to-sequence models like those used in machine translation or text generation. The goal of greedy decoding is to generate the most likely sequence of words or tokens given an input sequence.
-
-Here's how greedy decoding works:
-
-1. **Initialization**: Start with the input sequence and an empty output sequence.
-
-2. **Prediction**: At each step, the model predicts the next token in the sequence based on the current input and the tokens generated so far.
-
-3. **Selection**: Choose the token with the highest probability (or log-probability) as the next token in the output sequence.
-
-4. **Iteration**: Append the selected token to the output sequence and use it as part of the input for the next prediction step.
-
-5. **Termination**: The process continues until a stop token is generated or a predefined maximum length is reached.
-
-Greedy decoding is called ""greedy"" because it makes the locally optimal choice at each step, aiming to maximize the probability of the next token. This approach is computationally efficient but may not always produce the globally optimal sequence, as it does not consider the overall context or the potential impact of earlier decisions on later ones.
-
-In contrast, other decoding strategies like beam search or sampling consider multiple possibilities at each step, potentially leading to better overall sequences but at the cost of increased computational complexity.","highest, probability, next token",,100.0,PASS,https://huggingface.co/docs/transformers/en/generation_strategies,qwen2.5-coder:14b,v0.1
-Q019,What is sampling in text generation?,Sampling selects the next token according to the probability distribution rather than always selecting the highest probability token.,"Sampling in text generation refers to the process of selecting a sequence of words or tokens from a probability distribution over possible sequences. This is a crucial step in generating coherent and contextually relevant text, especially in models like GPT (Generative Pre-trained Transformer) where the output is not deterministic but rather probabilistic.
-
-Here are some key aspects of sampling in text generation:
-
-1. **Probability Distribution**: The model generates a probability distribution over the vocabulary for each position in the sequence. This distribution indicates the likelihood of each word or token being the next in the sequence.
-
-2. **Sampling Methods**: There are several methods to sample from this distribution:
-   - **Greedy Sampling**: This method selects the word with the highest probability at each step. It is deterministic and can lead to repetitive or predictable text.
-   - **Top-K Sampling**: This method selects from the top K most likely words. It introduces more diversity by considering only the most probable words, but still allows for some randomness.
-   - **Nucleus Sampling (Top-p Sampling)**: This method selects words whose cumulative probability is less than a specified threshold (p). It balances diversity and quality by considering a dynamic number of words.
-   - **Beam Search**: This method explores multiple sequences simultaneously, keeping the most promising ones. It is more computationally expensive but can generate higher-quality text.
-
-3. **Temperature**: Temperature is a hyperparameter that controls the randomness of the sampling process. A lower temperature makes the model more confident and deterministic, while a higher temperature introduces more randomness and diversity.
-
-4. **Repetition Penalty**: This technique penalizes the model for repeating the same words or phrases, which can help in generating more varied and interesting text.
-
-5. **Length Penalty**: This is used in beam search to adjust the scores of sequences based on their length, encouraging longer sequences that might be more coherent.
-
-By carefully choosing the sampling method and tuning parameters like temperature and penalties, text generation models can produce more natural and contextually appropriate outputs.","sampling, probability, distribution, token",,100.0,PASS,https://huggingface.co/docs/transformers/en/generation_strategies,qwen2.5-coder:14b,v0.1
-Q020,What does temperature do during text generation?,Temperature controls the sharpness of the next-token probability distribution and influences the randomness of token selection.,"In the context of text generation, temperature is a hyperparameter that controls the randomness of the output. It influences how the model selects the next word in the sequence during the generation process. A lower temperature value (closer to 0) makes the model more deterministic, selecting the most probable next word. Conversely, a higher temperature value (closer to 1) introduces more randomness, allowing the model to explore a wider range of possibilities and potentially generate more creative or diverse text. Adjusting the temperature can help balance between coherence and creativity in the generated text.","temperature, randomness","probability, distribution",50.0,REVIEW,https://huggingface.co/docs/transformers/en/main_classes/text_generation,qwen2.5-coder:14b,v0.1
-Q021,What is top-k sampling?,Top-k sampling restricts token selection to the k tokens with the highest probabilities.,"Top-k sampling is a method used in natural language processing and machine learning, particularly in the context of generating text. It involves selecting the k most likely next words from a probability distribution over the vocabulary, rather than choosing the single most likely word. This approach helps in generating more diverse and coherent text by introducing a degree of randomness and avoiding the over-reliance on the highest probability words.","top-k, highest","probabilities, tokens",50.0,REVIEW,https://huggingface.co/docs/transformers/en/main_classes/text_generation,qwen2.5-coder:14b,v0.1
-Q022,What is top-p sampling?,Top-p sampling selects from the smallest set of highest-probability tokens whose cumulative probability reaches the specified threshold.,"Top-p sampling, also known as nucleus sampling, is a method used in natural language processing to generate text. It involves selecting the smallest possible set of words from the probability distribution of possible next words that add up to a cumulative probability of 'p'. This method helps in reducing the diversity of the generated text by focusing on the most likely words, which can lead to more coherent and contextually relevant outputs.","top-p, cumulative, probability",threshold,75.0,PASS,https://huggingface.co/docs/transformers/en/main_classes/text_generation,qwen2.5-coder:14b,v0.1
-Q023,What is an embedding in a language model?,An embedding is a numerical vector representation of a token or other input item.,"In a language model, an embedding is a numerical representation of a word or phrase in a high-dimensional space. This representation is learned by the model during training and captures semantic and syntactic information about the word or phrase. Embeddings allow the model to understand the relationships between words and phrases, enabling it to perform tasks such as language translation, text classification, and question answering.","numerical, representation","vector, token",50.0,REVIEW,https://huggingface.co/docs/transformers/en/embeddings,qwen2.5-coder:14b,v0.1
-Q024,What is a token ID?,A token ID is an integer that identifies a token in a tokenizer vocabulary.,"A token ID is a unique identifier assigned to a specific token within a blockchain or a decentralized application (dApp). Tokens are digital assets that can represent various things, such as cryptocurrencies, utility, or access to a service. Each token in a collection or a smart contract is assigned a unique token ID to distinguish it from others. This ID is typically a number or a string of characters and is used to track the ownership and history of the token. It is crucial for managing and interacting with tokens on blockchain platforms.",token,"integer, identifies, vocabulary",25.0,REVIEW,https://huggingface.co/docs/transformers/en/tokenizer_summary,qwen2.5-coder:14b,v0.1
-Q025,What is the difference between a token ID and an embedding?,"A token ID is an integer identifier, while an embedding is a learned numerical vector representation associated with that token.","A token ID is a unique identifier assigned to a specific token in a vocabulary, often used in natural language processing to represent words or subwords. An embedding, on the other hand, is a dense vector representation of a token or word that captures semantic meaning and relationships with other words in a high-dimensional space. Token IDs are typically used for indexing and look-up in models, while embeddings are used for capturing the semantic meaning of tokens in a model.","identifier, embedding, vector",integer,75.0,PASS,https://huggingface.co/docs/transformers/en/embeddings,qwen2.5-coder:14b,v0.1
-Q026,What is positional encoding?,Positional encoding provides information about the position or order of tokens in a sequence.,"Positional encoding is a technique used in natural language processing and machine learning to provide information about the position of words in a sentence to the model. This is particularly important in models like transformers, which do not have inherent understanding of the order of words. Positional encoding adds a vector to each word embedding that represents its position in the sequence. This allows the model to understand the order of words and their relationships to each other.","position, order, sequence",tokens,75.0,PASS,https://arxiv.org/abs/1706.03762,qwen2.5-coder:14b,v0.1
-Q027,Why does a Transformer need positional information?,Positional information helps a Transformer distinguish token order because the same words in different orders can have different meanings.,"Transformers, a type of neural network architecture, are particularly effective in processing sequential data like text. However, unlike traditional sequential models such as RNNs (Recurrent Neural Networks), Transformers do not have inherent mechanisms to understand the order of elements in a sequence. This is because the self-attention mechanism, which is the core component of Transformers, treats all positions in the input sequence equally.
-
-To address this limitation, positional encodings are added to the input embeddings. These encodings are designed to inject information about the position of each token in the sequence into the model. Positional encodings are typically added to the input embeddings before they are fed into the Transformer layers. They are usually sinusoidal functions of the position and the dimension of the embedding, which allows the model to learn relative positions of words in the sequence.
-
-By incorporating positional information, Transformers can effectively capture the sequential nature of the data, enabling them to perform tasks such as language modeling, machine translation, and text summarization with high accuracy.",positional,"token order, different, meanings",25.0,REVIEW,https://arxiv.org/abs/1706.03762,qwen2.5-coder:14b,v0.1
-Q028,What are sinusoidal positional encodings?,Sinusoidal positional encodings use sine and cosine functions at different frequencies to represent token positions.,"Sinusoidal positional encodings are a method used in natural language processing (NLP) and other sequence modeling tasks to provide information about the position of words in a sequence to the model. This is particularly important in models like transformers, which do not have inherent understanding of the order of words.
-
-In sinusoidal positional encodings, each position in the sequence is assigned a vector of fixed size, where the values are determined by sine and cosine functions. These functions are applied to the position index and a set of frequencies. The result is that the positional encoding vectors for different positions are different, but they maintain a consistent pattern that can be learned by the model.
-
-The advantage of sinusoidal positional encodings is that they are smooth and continuous, which allows the model to interpolate between positions that are not explicitly encoded. This can be particularly useful for handling sequences of varying lengths or for tasks where the exact position of a word is less important than its relative position to other words.","sine, cosine, frequencies, positions",,100.0,PASS,https://arxiv.org/abs/1706.03762,qwen2.5-coder:14b,v0.1
-Q029,What are Rotary Positional Embeddings?,"Rotary Positional Embeddings, or RoPE, incorporate positional information by rotating token representations in the attention mechanism.","Rotary Positional Embeddings are a type of positional encoding used in transformer models, particularly in natural language processing tasks. Unlike traditional positional encodings that add fixed vectors to the input embeddings, rotary positional embeddings use a rotation matrix to encode the position of tokens. This method allows the model to capture relative positions between tokens more effectively, as the rotation operation is invariant to the absolute position of the tokens. Rotary positional embeddings have been shown to improve the performance of transformer models on various tasks, including language modeling and machine translation.",positional,"RoPE, rotating, attention",25.0,REVIEW,https://arxiv.org/abs/2104.09864,qwen2.5-coder:14b,v0.1
-Q030,What is the role of the Transformer in an autoregressive language model?,The Transformer processes token representations using attention and neural network layers to produce information used for next-token prediction.,"The Transformer plays a crucial role in an autoregressive language model by enabling the model to understand the context and dependencies between words in a sentence. It does this through self-attention mechanisms, which allow the model to weigh the importance of different words when generating the next word in a sequence. This is particularly useful in autoregressive models, where the output at each step is used as input for the next step, and the model must maintain a coherent understanding of the entire sequence up to that point. The Transformer architecture, introduced in the paper ""Attention is All You Need,"" has significantly improved the performance of language models in various natural language processing tasks.","Transformer, attention","token, prediction",50.0,REVIEW,https://arxiv.org/abs/1706.03762,qwen2.5-coder:14b,v0.1
+* **Cost and Pricing:** Companies like OpenAI and Anthropic charge users (via APIs) **per token** (both for the prompt you input and the response the AI generates). 
+* **Context Windows (Memory Limits):** LLMs have a strict limit on how many tokens they can process at once (e.g., 8,000 tokens, 128,000 tokens, or even 1 million tokens). If your prompt exceeds this limit, the model will cut off the beginning of the conversation or throw an error.
+* **Language Efficiency:** Tokenizers are usually trained heavily on English. Because of this, non-English languages (like Japanese, Arabic, or Hindi) often get broken down into *more* tokens per word than English. This makes using LLMs in other languages more expensive and eats up the context window faster.
+* **Coding and Math:** Code and numbers often tokenize poorly. A string of numbers or complex programming syntax might be broken down into individual digits or characters, consuming tokens much faster than plain English prose.","text, tokens",splitting,66.67,PASS,https://huggingface.co/docs/transformers/en/tokenizer_summary,gemini-3.5-flash-lite,v0.1

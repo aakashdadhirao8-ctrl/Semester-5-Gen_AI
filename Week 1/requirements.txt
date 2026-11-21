@@ -1,3 +1,4 @@
-
-google-genai
+pytest
+openai
 python-dotenv
+google-genai

@@ -1,37 +1,31 @@
-
 from abc import ABC, abstractmethod
 from google import genai
 import requests
 
-
-# 1. Common interface
+# Common interface
 class LLMProvider(ABC):
-
     @abstractmethod
     def generate(self, prompt):
         pass
 
-
-# 2. Gemini cloud provider
+# Gemini cloud provider
 class GeminiProvider(LLMProvider):
-
-    def __init__(self, api_key):
+    def __init__(self, api_key, model="gemini-3.1-flash-lite"):
+        self.model = model
         self.client = genai.Client(api_key=api_key)
 
     def generate(self, prompt):
         response = self.client.models.generate_content(
-            model="gemini-3.5-flash",
+            model=self.model,
             contents=prompt
         )
         return response.text
 
-
-# 3. Ollama local provider
+# Ollama local provider
 class OllamaProvider(LLMProvider):
-
-    def __init__(self, model="qwen2.5-coder:14b"):
+    def __init__(self, model="llama3.2", url="http://localhost:11434/api/generate"):
         self.model = model
-        self.url = "http://localhost:11434/api/generate"
+        self.url = url
 
     def generate(self, prompt):
         response = requests.post(
@@ -41,16 +35,13 @@ class OllamaProvider(LLMProvider):
                 "prompt": prompt,
                 "stream": False
             },
-            timeout=300
+            timeout=120
         )
-
         response.raise_for_status()
         return response.json()["response"]
 
-
-# 4. Common LLM client
+# Common client
 class LLMClient:
-
     def __init__(self, provider):
         self.provider = provider
 

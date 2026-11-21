@@ -1,7 +1,9 @@
 import os
+from pathlib import Path
 from dataclasses import dataclass
 from dotenv import load_dotenv
 
+load_dotenv(Path(__file__).with_name(".env"))
 load_dotenv()
 
 @dataclass
