@@ -1,51 +1,33 @@
-# Week 5: Token Economics & Budget Capacity Planning
+# Week 5: Token Economics and Budget Planning
 
-## 🎯 Lab Focus
-Perform quantitative token economics modeling, API capacity verification, and financial budget planning before deploying an AI feature to production.
+## Objective
+Calculate projected token consumption, estimate daily and monthly API costs, and evaluate rate limit capacity (RPM and TPM) with safety margins before deploying an LLM feature.
 
----
+## What I Learnt
+- How to estimate daily token load from requests per day and average token lengths:
+  - Daily Input Tokens = Requests/Day * Avg Input Tokens
+  - Daily Output Tokens = Requests/Day * Avg Output Tokens
+- How to calculate daily and monthly costs using per-million-token pricing.
+- How to check peak concurrency limits against provider quotas (Requests Per Minute and Tokens Per Minute).
+- Why adding a safety margin (e.g., 20%) is necessary to protect against sudden traffic spikes and rate limits.
+- How to build dataclasses in Python to validate and report budget checks.
 
-## 🧠 What We Have Learnt
+## Files
+- `budget.py`: `FeatureBudget` dataclass that reads parameters from `.env` and generates the Token Economics Report.
+- `test_budget.py`: Unit tests verifying that cost calculations and capacity checks pass or fail as expected.
+- `.env`: Holds traffic assumptions, pricing, and budget limits.
+- `.env.example`: Template for budget configuration.
+- `requirements.txt`: Package dependencies (`python-dotenv`, `pytest`).
 
-1. **Token Economics Modeling**:
-   - Calculated expected daily and monthly token consumption from user traffic assumptions:
-     $$\text{Daily Input} = \text{Requests/Day} \times \text{Avg Input Tokens}$$
-     $$\text{Daily Output} = \text{Requests/Day} \times \text{Avg Output Tokens}$$
-     $$\text{Daily Cost} = \frac{\text{Daily Input} \times P_{\text{in}} + \text{Daily Output} \times P_{\text{out}}}{1,000,000}$$
-2. **Burst & Concurrency Capacity Planning**:
-   - Modeled peak traffic load using **Requests Per Minute (RPM)** and **Tokens Per Minute (TPM)**.
-   - Evaluated burst limits against provider tier quotas (e.g. 100 RPM, 50,000 TPM).
-3. **Safety Margins**:
-   - Integrated configurable safety margins (e.g. 20% traffic surge buffer) to ensure the system does not hit 429 rate limit errors or exceed daily budgets during unexpected traffic spikes.
-4. **Automated Planning Gates**:
-   - Automated Pass/Review checks across four pillars: RPM Capacity, TPM Capacity, Daily Budget, and Monthly Budget.
+## How to Run
 
----
-
-## 📂 Project Structure
-
-```text
-Week 5/
-├── .env                  # Capacity & budget parameters (ignored by Git)
-├── .env.example          # Parameter template with production defaults
-├── .gitignore            # Excludes environment variables and Python cache
-├── budget.py             # FeatureBudget dataclass & token economics report generator
-├── README.md             # Documentation and economic formulas
-├── requirements.txt      # Dependencies (python-dotenv, pytest)
-└── test_budget.py        # Automated unit tests testing capacity and budget thresholds
-```
-
----
-
-## 🚀 How to Execute
-
-### 1. Run the Token Economics Report (`budget.py`)
+### 1. Run the Budget Report
 ```powershell
 cd "Week 5"
 python budget.py
 ```
 
-### 2. Expected Output
+Expected output:
 ```text
 TOKEN ECONOMICS REPORT
 -----------------------------------
@@ -66,17 +48,15 @@ Monthly budget: PASS
 Recommendation: WITHIN configured planning limits.
 ```
 
-### 3. Run the Automated Unit Tests (`test_budget.py`)
+### 2. Run the Unit Tests
 ```powershell
 python test_budget.py
 ```
-- **Expected Output**:
-  ```text
-  ....
-  ----------------------------------------------------------------------
-  Ran 4 tests in 0.000s
+Expected output:
+```text
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
 
-  OK
-  ```
-
-*(To return to the root folder after running: `cd ..`)*
+OK
+```

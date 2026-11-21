@@ -1,64 +1,37 @@
 # Week 1: First LLM API Call
 
-## 🎯 Lab Focus
-Connect a Python application to a Large Language Model (LLM) using the Google Gemini API, authenticate securely using environment variables, and process AI-generated completions.
+## Objective
+The objective of this lab is to connect a Python script to an LLM using the Google Gemini API, store the API key securely in a `.env` file, and print the generated response.
 
----
+## What I Learnt
+- Why API keys are required to authenticate client programs with an LLM platform.
+- How to store keys securely in a `.env` file instead of hardcoding them in the script.
+- How to load environment variables using `python-dotenv`.
+- How to initialize the `google-genai` client and make a request with `gemini-3.8-flash`.
+- How to handle common setup issues like invalid API keys and missing dependencies.
 
-## 🧠 What We Have Learnt
+## Files
+- `main.py`: Python code to load the key, call Gemini, and print the response.
+- `.env`: Contains the secret `GEMINI_API_KEY` (kept out of Git).
+- `.env.example`: Example file showing how to structure the `.env` file.
+- `requirements.txt`: Required Python packages.
+- `.gitignore`: Prevents `.env` and `.venv` from being pushed to GitHub.
 
-1. **Role of API Keys in LLM Applications**:
-   - Understand how API keys act as credentials to authenticate client applications, monitor usage, and apply billing/rate limits.
-2. **Environment Variable Security**:
-   - Learned why hardcoding secrets directly in source code is a major security risk.
-   - Used `python-dotenv` and `.env` files to keep API keys secure and ignored by version control (`.gitignore`).
-3. **Google GenAI SDK Integration**:
-   - Initialized and used the official `google-genai` client library (`genai.Client`).
-   - Dispatched structured generation requests using `client.models.generate_content`.
-4. **Model Selection & Error Handling**:
-   - Configured modern model endpoints (`gemini-3.8-flash`).
-   - Diagnosed and resolved authentication (`API_KEY_INVALID`), model deprecation, and configuration errors.
+## How to Run
 
----
+1. Make sure your `.venv` is activated.
+2. Ensure `Week 1/.env` contains your API key:
+   ```env
+   GEMINI_API_KEY=your_actual_key
+   ```
+3. Run the script:
+   ```powershell
+   cd "Week 1"
+   python main.py
+   ```
 
-## 📂 Project Structure
-
-```text
-Week 1/
-├── .env                  # Secret API key (ignored by Git)
-├── .env.example          # Template for environment configuration
-├── .gitignore            # Excludes .env, .venv, and cache files
-├── main.py               # Main application script
-├── README.md             # Lab documentation and instructions
-└── requirements.txt      # Python dependencies
-```
-
----
-
-## 🚀 How to Execute
-
-### 1. Prerequisites & Environment Setup
-Make sure your virtual environment is active in the terminal:
-```powershell
-# From the project root
-.\.venv\Scripts\Activate.ps1
-```
-
-### 2. Configure Credentials
-Ensure your `Week 1/.env` file contains your valid Gemini API key:
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-```
-
-### 3. Run the Program
-```powershell
-cd "Week 1"
-python main.py
-```
-
-### 4. Expected Output
+## Expected Output
 ```text
 LLM Response:
 At its simplest, Artificial Intelligence (AI) is about teaching machines to think, learn, and make decisions like humans...
 ```
-*(To return to the root folder after running: `cd ..`)*
